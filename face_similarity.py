@@ -18,7 +18,7 @@ def get_embedding(img_path):
 # Get embeddings
 e1 = get_embedding("faces/face1.JPG")
 e2 = get_embedding("faces/face2.JPG")
-e3 = get_embedding("faces/rock.jpeg")
+e3 = get_embedding("faces/face3.JPG")
 
 # Check if any embedding is None
 if any(e is None for e in [e1, e2, e3]):

@@ -1,0 +1,32 @@
+[
+  {
+    "same_person": true,
+    "confidence": 0.85,
+    "mismatched_images": [],
+    "face_detection": {
+      "image1": true,
+      "image2": true,
+      "image3": true
+    }
+  },
+  {
+    "same_person": true,
+    "confidence": 0.75,
+    "mismatched_images": [],
+    "face_detection": {
+      "image1": true,
+      "image2": true,
+      "image3": true
+    }
+  },
+  {
+    "same_person": true,
+    "confidence": 0.85,
+    "mismatched_images": [],
+    "face_detection": {
+      "image1": true,
+      "image2": true,
+      "image3": true
+    }
+  }
+]
