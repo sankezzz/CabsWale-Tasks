@@ -9,7 +9,8 @@ gen_model=genai.GenerativeModel(MODEL)
 image=Image.open('car.jpg')
 e1 = Image.open("faces/face1.JPG")
 e2 = Image.open("faces/face2.JPG")
-e3 = Image.open("faces/face3.JPG")
+e3 = Image.open("faces/rock.jpeg")
+person_id=Image.open("faces/adhar.jpg")
 response=gen_model.generate_content(
     [
        """
@@ -22,6 +23,7 @@ Your task is to:
    - Compare the faces to check if they belong to the **same person**.
    - Calculate a confidence score.
    - Identify which image(s) are mismatched, if any.
+4. there is also an id of the person in this so i will need you to detect the face from the id and 
 
 ### Step 1: Face Detection
 

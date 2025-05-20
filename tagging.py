@@ -15,11 +15,11 @@ def get_instagram_profile_data(username):
     time.sleep(5)  # Let page load completely
 
     soup = BeautifulSoup(driver.page_source, 'html.parser')
-
+    # print(soup)
     # Get bio
     bio_section = soup.find('meta', property="og:description")
     bio = bio_section["content"] if bio_section else "No bio found"
-
+    print(bio_section)
     # Get images
     images = []
     for img in soup.find_all('img'):
@@ -28,13 +28,17 @@ def get_instagram_profile_data(username):
     driver.quit()
     return {
         "bio": bio,
-        "images": images[:5]  
+        "images": images[:5], 
+        "content":bio_section
     }
+    
 
 # Example usage
 data = get_instagram_profile_data('cab_driver__')
 print("Bio:", data['bio'])
-# print("Images:", data['images'])
+print(data['content'])
+
+print("Images:", data['images'])
 
 # now we will be giving this data to gemini to tell us about the person 
 from prep import genai, MODEL

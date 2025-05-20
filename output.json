@@ -28,5 +28,101 @@
       "image2": true,
       "image3": true
     }
+  },
+  {
+    "same_person": true,
+    "confidence": 0.85,
+    "mismatched_images": [],
+    "face_detection": {
+      "image1": true,
+      "image2": true,
+      "image3": true
+    }
+  },
+  {
+    "same_person": false,
+    "confidence": 0.75,
+    "mismatched_images": [
+      "image3"
+    ],
+    "face_detection": {
+      "image1": true,
+      "image2": true,
+      "image3": true
+    }
+  },
+  {
+    "same_person": false,
+    "confidence": 0.75,
+    "mismatched_images": [
+      "image3"
+    ],
+    "face_detection": {
+      "image1": true,
+      "image2": true,
+      "image3": true
+    }
+  },
+  {
+    "same_person": false,
+    "confidence": 0.85,
+    "mismatched_images": [
+      "image3"
+    ],
+    "face_detection": {
+      "image1": true,
+      "image2": true,
+      "image3": true
+    }
+  },
+  {
+    "same_person": false,
+    "confidence": 0.85,
+    "mismatched_images": [
+      "image3"
+    ],
+    "face_detection": {
+      "image1": true,
+      "image2": true,
+      "image3": true
+    }
+  },
+  {
+    "same_person": false,
+    "confidence": 0.0,
+    "mismatched_images": [
+      "image1",
+      "image2",
+      "image3"
+    ],
+    "face_not_detected": []
+  },
+  {
+    "same_person": false,
+    "confidence": 0.0,
+    "mismatched_images": [
+      "image1",
+      "image2",
+      "image3"
+    ],
+    "face_not_detected": []
+  },
+  {
+    "same_person": true,
+    "confidence": 0.98,
+    "mismatched_images": [],
+    "face_not_detected": []
+  },
+  {
+    "same_person": true,
+    "confidence": 0.98,
+    "mismatched_images": [],
+    "face_not_detected": []
+  },
+  {
+    "same_person": true,
+    "confidence": 0.95,
+    "mismatched_images": [],
+    "face_not_detected": []
   }
 ]
