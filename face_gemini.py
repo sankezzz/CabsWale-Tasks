@@ -7,7 +7,7 @@ gen_model=genai.GenerativeModel(MODEL)
 #AP9TA9931
 
 image=Image.open('car.jpg')
-e1 = Image.open("faces/face1.JPG")
+e1 = Image.open("faces/face4.JPG")
 e2 = Image.open("faces/face2.JPG")
 e3 = Image.open("faces/rock.jpeg")
 person_id=Image.open("faces/adhar.jpg")
@@ -77,7 +77,7 @@ If all faces are detected, return:
         e1,e2,e3
     ]
 )
-print(response.text)
+print(response)
 output=response.text
 
 

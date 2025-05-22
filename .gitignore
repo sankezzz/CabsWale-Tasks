@@ -1,3 +1,4 @@
 .env
 /video
 __pycache__
+cred.json

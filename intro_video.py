@@ -1,50 +1,60 @@
 import os
-from openai import OpenAI  # new import style
+import assemblyai as aai
 from prep import MODEL, genai
-import json
-import re
 
+# Init Gemini model
 gen_model = genai.GenerativeModel(MODEL)
 
-# Initialize OpenAI client
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))  # Or set your key here directly
+# Set AssemblyAI API key
+aai.settings.api_key = ""
 
-# === Step 2: Transcribe audio using Whisper (new SDK usage) ===
-def transcribe_audio(audio_path):
-    with open(audio_path, "rb") as audio_file:
-        transcript = client.audio.transcriptions.create(
-            file=audio_file,
-            model="whisper-1"
-        )
-    print("Transcription done.")
+# Audio file path
+audio_file = "video/audio.mp3"
+
+# Transcription
+def transcribe_audio(file_path):
+    config = aai.TranscriptionConfig(speech_model=aai.SpeechModel.best)
+    transcript = aai.Transcriber(config=config).transcribe(file_path)
+
+    if transcript.status == "error":
+        raise RuntimeError(f"Transcription failed: {transcript.error}")
+
+    print(" Transcription complete.")
     return transcript.text
 
-# === Step 3: Analyze transcript using GPT-4 ===
-def analyze_transcript(transcript_text):
+
+# Transcript analysis using Gemini
+def analyze_transcript(text):
     prompt = f"""
-Analyze the following personal introduction:
+You are an assistant that analyzes personal introduction audio transcripts.
 
-"{transcript_text}"
+Given the transcript:
+\"\"\"{text}\"\"\"
+this transcript might be in hinglish and hindi and you need to understand it then only go through 
+Return a JSON with:
+- If the person mentioned their name
+- If they mentioned any driving or professional experience
+- Sentiment of tone (e.g., confident, hesitant, neutral)
+- Any red flags mentioned (or null if none)
 
-Check and return in JSON format:
-1. Did the speaker mention their name?
-2. Did they describe their professional driving experience?
-3. Is the tone confident or hesitant?
-4. What is the overall sentiment?
-5. Are there any red flags?
+Respond strictly in this JSON format:
+{{
+  "name": true/false,
+  "experience": true/false,
+  "sentiment": "confident/hesitant/neutral",
+  "red_flags": "string or null"
+}}
 """
-    response = gen_model.generate_content(prompt)
 
-    analysis = response["choices"][0]["message"]["content"]
-    print("Analysis Complete.")
-    return analysis
+    response = gen_model.generate_content(prompt)
+    print(" Analysis complete.")
+    return response.text.strip()
+
 
 # === Main flow ===
 if __name__ == "__main__":
-    audio_path = "video/audio.mp3"
+    transcript_text = transcribe_audio(audio_file)
+    print("\n--- Transcript ---\n", transcript_text)
 
-    transcript = transcribe_audio(audio_path)
-    print("\n--- Transcript ---\n", transcript)
-
-    analysis = analyze_transcript(transcript)
-    print("\n--- Analysis ---\n", analysis)
+    analysis_json = analyze_transcript(transcript_text)
+    print("\n--- Analysis JSON ---\n", analysis_json)
