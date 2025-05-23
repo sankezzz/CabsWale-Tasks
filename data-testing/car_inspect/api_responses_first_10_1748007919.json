@@ -1,0 +1,112 @@
+[
+  {
+    "plates_match": true,
+    "detected_number_plate": "GJ01WH8123",
+    "input_number_plate": "GJ01WH8123",
+    "verification_status": true,
+    "make_model": "Hyundai Aura",
+    "color": "White",
+    "estimated_year": "2020",
+    "condition": "Good",
+    "reason": "Success: Vehicle verified successfully"
+  },
+  {
+    "plates_match": true,
+    "detected_number_plate": "MP09DQ6348",
+    "input_number_plate": "MP09DQ6348",
+    "verification_status": true,
+    "make_model": "Maruti Suzuki Ertiga",
+    "color": "White",
+    "estimated_year": "2023",
+    "condition": "Good",
+    "reason": "Success: Vehicle verified successfully"
+  },
+  {
+    "plates_match": true,
+    "detected_number_plate": "UK07TE2206",
+    "input_number_plate": "UK07TE2206",
+    "verification_status": true,
+    "make_model": "Unknown",
+    "color": "Unknown",
+    "estimated_year": "Unknown",
+    "condition": "Unknown",
+    "reason": "Success: Vehicle verified successfully"
+  },
+  {
+    "plates_match": true,
+    "detected_number_plate": "PB01D1431",
+    "input_number_plate": "PB01D1431",
+    "verification_status": true,
+    "make_model": "Hyundai Aura",
+    "color": "Gray",
+    "estimated_year": "2020",
+    "condition": "Good",
+    "reason": "Success: Vehicle verified successfully"
+  },
+  {
+    "plates_match": true,
+    "detected_number_plate": "HR38AA8623",
+    "input_number_plate": "HR38AA8623",
+    "verification_status": true,
+    "make_model": "Unknown",
+    "color": "Unknown",
+    "estimated_year": "Unknown",
+    "condition": "Unknown",
+    "reason": "Success: Vehicle verified successfully"
+  },
+  {
+    "plates_match": true,
+    "detected_number_plate": "UK07TE2332",
+    "input_number_plate": "UK07TE2332",
+    "verification_status": true,
+    "make_model": "Suzuki Ertiga or Unknown",
+    "color": "White or Unknown",
+    "estimated_year": "2018 or Unknown",
+    "condition": "Average",
+    "reason": "success if verification true else use notes from ENHANCED ERROR HANDLING "
+  },
+  {
+    "plates_match": true,
+    "detected_number_plate": "HP01H5009",
+    "input_number_plate": "HP01H5009",
+    "verification_status": true,
+    "make_model": "Toyota Innova",
+    "color": "White",
+    "estimated_year": "2017",
+    "condition": "Average",
+    "reason": "Success: Vehicle verified successfully"
+  },
+  {
+    "plates_match": false,
+    "detected_number_plate": "HP01H7103",
+    "input_number_plate": "HP01A7103",
+    "verification_status": false,
+    "make_model": "Unknown",
+    "color": "Unknown",
+    "estimated_year": "Unknown",
+    "condition": "Unknown",
+    "reason": "Less than 2 images provided"
+  },
+  {
+    "plates_match": true,
+    "detected_number_plate": "HR47F1725",
+    "input_number_plate": "HR47F1725",
+    "verification_status": true,
+    "make_model": "Suzuki Swift Dzire or Unknown",
+    "color": "White or Unknown",
+    "estimated_year": "Unknown",
+    "condition": "Average",
+    "reason": "Success: Vehicle verified successfully"
+  },
+  {
+    "plates_match": true,
+    "detected_number_plate": "UP65FM2881",
+    "input_number_plate": "UP65FM2881",
+    "verification_status": true,
+    "make_model": "Suzuki Ertiga",
+    "color": "White",
+    "estimated_year": "2020",
+    "condition": "Average",
+    "reason": "Success: Vehicle verified successfully"
+  }
+]

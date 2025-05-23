@@ -1,0 +1,54 @@
+[
+  {
+    "error": "HTTP 400",
+    "message": "'image_urls' must be a list of exactly two image URLs"
+  },
+  {
+    "error": "HTTP 400",
+    "message": "'image_urls' must be a list of exactly two image URLs"
+  },
+  {
+    "error": "HTTP 400",
+    "message": "'image_urls' must be a list of exactly two image URLs"
+  },
+  {
+    "detected_number_plate": null,
+    "plates_match": false,
+    "make_model": null,
+    "color": null,
+    "estimated_year": null,
+    "condition": null,
+    "verification_status": false,
+    "reason": "Number plates don't match: Front [PB01D1431] vs Rear [PB01D1431]"
+  },
+  {
+    "error": "HTTP 400",
+    "message": "'image_urls' must be a list of exactly two image URLs"
+  },
+  {
+    "detected_number_plate": null,
+    "plates_match": null,
+    "make_model": null,
+    "color": null,
+    "estimated_year": null,
+    "condition": null,
+    "verification_status": null,
+    "reason": "Rear number plate not visible"
+  },
+  {
+    "error": "HTTP 400",
+    "message": "'image_urls' must be a list of exactly two image URLs"
+  },
+  {
+    "error": "HTTP 400",
+    "message": "'image_urls' must be a list of exactly two image URLs"
+  },
+  {
+    "error": "HTTP 400",
+    "message": "'image_urls' must be a list of exactly two image URLs"
+  },
+  {
+    "error": "HTTP 400",
+    "message": "'image_urls' must be a list of exactly two image URLs"
+  }
+]

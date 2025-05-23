@@ -1,0 +1,63 @@
+[
+  {
+    "error": "HTTP 400",
+    "message": "{\"reason\":\"At least 2 image URL is required\"}"
+  },
+  {
+    "error": "HTTP 400",
+    "message": "{\"reason\":\"At least 2 image URL is required\"}"
+  },
+  {
+    "error": "HTTP 400",
+    "message": "{\"reason\":\"At least 2 image URL is required\"}"
+  },
+  {
+    "plates_match": true,
+    "detected_number_plate": "PB01D1431",
+    "input_number_plate": "PB01D1431",
+    "verification_status": true,
+    "make_model": "Hyundai Aura",
+    "color": "Gray",
+    "estimated_year": "2020",
+    "condition": "Good",
+    "reason": "Success: Vehicle verified successfully"
+  },
+  {
+    "error": "HTTP 400",
+    "message": "{\"reason\":\"At least 2 image URL is required\"}"
+  },
+  {
+    "plates_match": true,
+    "detected_number_plate": "UK07TE2332",
+    "input_number_plate": "UK07TE2332",
+    "verification_status": true,
+    "make_model": "Suzuki Ertiga",
+    "color": "White",
+    "estimated_year": "2018",
+    "condition": "Average",
+    "reason": "Success: Vehicle verified successfully"
+  },
+  {
+    "error": "HTTP 400",
+    "message": "{\"reason\":\"At least 2 image URL is required\"}"
+  },
+  {
+    "error": "HTTP 400",
+    "message": "{\"reason\":\"At least 2 image URL is required\"}"
+  },
+  {
+    "error": "HTTP 400",
+    "message": "{\"reason\":\"At least 2 image URL is required\"}"
+  },
+  {
+    "plates_match": true,
+    "detected_number_plate": "UP65FM2881",
+    "input_number_plate": "UP65FM2881",
+    "verification_status": true,
+    "make_model": "Suzuki Ertiga",
+    "color": "White",
+    "estimated_year": "2020",
+    "condition": "Average",
+    "reason": "Success: Vehicle verified successfully"
+  }
+]
