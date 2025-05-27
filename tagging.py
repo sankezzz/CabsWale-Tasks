@@ -28,7 +28,7 @@ def get_instagram_profile_data(username):
     driver.quit()
     return {
         "bio": bio,
-        "images": images[:5], 
+        "images": images[:2], 
         "content":bio_section
     }
     
@@ -38,7 +38,6 @@ data = get_instagram_profile_data('cab_driver__')
 print("Bio:", data['bio'])
 print(data['content'])
 
-print("Images:", data['images'])
 
 # now we will be giving this data to gemini to tell us about the person 
 from prep import genai, MODEL
