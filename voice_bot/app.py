@@ -1,18 +1,26 @@
-from flask import Flask
+from flask import Flask,render_template
 from google.cloud import speech, dialogflow_v2 as dialogflow, texttospeech
 import io
 import os
 from record_audio import record_audio
 import playsound
+from prep import genai,MODEL
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "cred.json"
-
+gen_model=genai.GenerativeModel(MODEL)
 app = Flask(__name__)
 
 PROJECT_ID = "cabswale-test"
 LANGUAGE_CODE = "en-US"
+buffer_memory=[""]
+
 
 @app.route("/")
+def main():
+    return render_template("index.html")
+
+
+@app.route("/record_audio")
 def run_bot():
     # Step 1: Record voice
     audio_file = record_audio(duration=5)
@@ -24,34 +32,29 @@ def run_bot():
 
     audio_config = speech.RecognitionConfig(
         encoding=speech.RecognitionConfig.AudioEncoding.MP3,
-        language_code=LANGUAGE_CODE,
+        language_code="hi-IN",
         sample_rate_hertz=16000,
     )
+    
 
     audio = speech.RecognitionAudio(content=content)
     response = stt_client.recognize(config=audio_config, audio=audio)
     if not response.results:
         return "No speech detected.", 400
 
+
     text_input = response.results[0].alternatives[0].transcript.strip()
     if not text_input:
         return "Speech was empty.", 400
-
+    buffer_memory.append(text_input)
     print("You said:", text_input)
+    print(buffer_memory)
 
-    # Step 3: Send text to Dialogflow
-    session_client = dialogflow.SessionsClient()
-    session = session_client.session_path(PROJECT_ID, "123456789")
-    text = dialogflow.TextInput(text=text_input, language_code=LANGUAGE_CODE)
-    query_input = dialogflow.QueryInput(text=text)
+    prompt='''you are a chatbot and you need to give reply to the user in a really good manner and your reply will be converted to speech so talk you need to consider in english keep the output short and less within 10 words you will also given buffer memory that what the user has said before for the context of the user as {buffer_memory} only give output as you are speaking to person '''
 
-    dialogflow_response = session_client.detect_intent(
-        request={"session": session, "query_input": query_input}
-    )
-    reply = dialogflow_response.query_result.fulfillment_text
-    if not reply.strip():
-        return "Dialogflow response was empty.", 400
-    print("Bot:", reply)
+    output=gen_model.generate_content([prompt]+[text_input]+buffer_memory)
+    reply=output.text
+    print("Gemini Reply:",reply)
 
     # Step 4: Convert reply to speech (TTS)
     tts_client = texttospeech.TextToSpeechClient()
@@ -70,6 +73,7 @@ def run_bot():
     playsound.playsound("response.wav") 
 
     return "Conversation complete!"
+
 
 if __name__ == "__main__":
     app.run(debug=True)
