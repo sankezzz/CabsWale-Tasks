@@ -175,44 +175,75 @@ Provide ONLY your response as the कैबस्वाले assistant. Do not 
     output=results.text
     return output
 
+import threading
+
+stop_tts_flag = False
+tts_thread = None
+
 def get_TTS(output_text):
-    tts_client = texttospeech.TextToSpeechClient()
-    synthesis_input = texttospeech.SynthesisInput(text=output_text)
-    voice = texttospeech.VoiceSelectionParams(language_code='hi-IN', name="hi-IN-Wavenet-A", ssml_gender=texttospeech.SsmlVoiceGender.FEMALE)#hi-IN-Chirp3-HD-Aoede
-    audio_config = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.LINEAR16)
+    global stop_tts_flag
 
-    tts_response = tts_client.synthesize_speech(
-        input=synthesis_input, voice=voice, audio_config=audio_config
-    )
-    print("TTS working and speaking ")
-    with open("response.wav", "wb") as out:
-        out.write(tts_response.audio_content)
+    def play_audio():
+        global stop_tts_flag
+        tts_client = texttospeech.TextToSpeechClient()
+        synthesis_input = texttospeech.SynthesisInput(text=output_text)
+        voice = texttospeech.VoiceSelectionParams(
+            language_code='hi-IN',
+            name="hi-IN-Wavenet-A",
+            ssml_gender=texttospeech.SsmlVoiceGender.FEMALE
+        )
+        audio_config = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.LINEAR16)
 
-    pygame.mixer.init()
-    pygame.mixer.music.load('response.wav')
-    pygame.mixer.music.play()
+        tts_response = tts_client.synthesize_speech(
+            input=synthesis_input, voice=voice, audio_config=audio_config
+        )
+        with open("response.wav", "wb") as out:
+            out.write(tts_response.audio_content)
 
-    while pygame.mixer.music.get_busy():
-        pygame.time.Clock().tick(10)
+        pygame.mixer.init()
+        pygame.mixer.music.load("response.wav")
+        pygame.mixer.music.play()
+        print("🔊 Speaking...")
 
-    pygame.mixer.music.stop()
-    pygame.mixer.quit() 
+        while pygame.mixer.music.get_busy():
+            if stop_tts_flag:
+                print("⛔ Interrupted by user")
+                pygame.mixer.music.stop()
+                break
+            pygame.time.Clock().tick(10)
+
+        pygame.mixer.quit()
+
+    # Run audio in background thread
+    stop_tts_flag = False
+    t = threading.Thread(target=play_audio)
+    t.start()
+    return t
 
 
 if __name__ == "__main__":
-    user_buffer=[]
-    ai_buffer=[]
+    user_buffer = []
+    ai_buffer = []
     while True:
         try:
             user_transcript = get_STT()
+
+            if tts_thread and tts_thread.is_alive():
+                #  If user speaks during TTS, interrupt it
+                stop_tts_flag = True
+                tts_thread.join()
+
             user_buffer.append(user_transcript)
-            print("getting gemini results")
-            gemini_results=get_gemini_results(user_transcript,user_buffer,ai_buffer)
-            get_TTS(output_text=gemini_results)
-            time.sleep(2)
-            print("you can speak again")
+            print(" Getting Gemini results...")
+            gemini_results = get_gemini_results(user_transcript, user_buffer, ai_buffer)
+            ai_buffer.append(gemini_results)
+
+            #  Start TTS as background thread
+            tts_thread = get_TTS(gemini_results)
+
         except KeyboardInterrupt:
             print("\n Exiting...")
             break
         except Exception as e:
             print(f" Error: {e}")
+
