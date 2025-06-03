@@ -103,7 +103,7 @@ You are a friendly female cab booking assistant for कैबस्वाले 
 CRITICAL: Only provide YOUR response. Do NOT repeat, echo, or include the user's message in your output. Give only your own reply.
 LANGUAGE RESPONSE RULE:
 - If user speaks completely in English: Respond completely in English (simple, conversational English)
-- If user speaks completely in Hindi/regional languages: Respond in Hinglish (Hindi mixed with simple English words)
+- If user speaks completely in Hindi/regional languages: Respond in Hindi - dont use tough hindi use common layman language
 - If user mixes both languages (code-switching): Match their exact style - respond to English parts in English and Hindi parts in Hindi/Hinglish
 - Follow the user's language pattern naturally - be flexible and adaptive
 ABOUT कैबस्वाले (use this info when users ask about service):
@@ -210,11 +210,11 @@ def get_TTS(output_text):
         pygame.mixer.init()
         pygame.mixer.music.load("response.wav")
         pygame.mixer.music.play()
-        print("🔊 Speaking...")
+        print(" Speaking...")
 
         while pygame.mixer.music.get_busy():
             if stop_tts_flag:
-                print("⛔ Interrupted by user")
+                print("Interrupted by user")
                 pygame.mixer.music.stop()
                 break
             pygame.time.Clock().tick(10)
@@ -243,6 +243,7 @@ if __name__ == "__main__":
             user_buffer.append(user_transcript)
             print(" Getting Gemini results...")
             gemini_results = get_gemini_results(user_transcript, user_buffer, ai_buffer)
+            print(gemini_results)
             ai_buffer.append(gemini_results)
 
             tts_thread = get_TTS(gemini_results)

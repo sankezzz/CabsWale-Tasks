@@ -66,6 +66,8 @@ def generate_audio_chunks_vad(vad, silence_timeout=SILENCE_TIMEOUT):
         stream.close()
         p.terminate()
 
+import sys
+
 def listen_print_loop(responses):
     final_transcript = ""
     last_result_time = time.time()
@@ -82,15 +84,16 @@ def listen_print_loop(responses):
         current_time = time.time()
 
         if result.is_final:
-            print(f" Final Chunk: {transcript}")
-            final_transcript += " " + transcript
-            last_result_time = current_time
+            # Clear partial, show final on new line
+            sys.stdout.write("\r" + " " * 80 + "\r")  # Clear current line
+            sys.stdout.write(f"🎤 Final Transcript: {transcript}\n")
+            sys.stdout.flush()
+            return transcript
         else:
-            print(f"Interim: {transcript}")
-
-        if final_transcript and (current_time - last_result_time) > MAX_PAUSE_DURATION:
-            print(" Pause after final result detected, ending transcription.")
-            break
+            # Overwrite the same line with updated partial transcript
+            sys.stdout.write(f"\r🗣️  Listening: {transcript}")
+            sys.stdout.flush()
+        
 
     return final_transcript.strip()
 
