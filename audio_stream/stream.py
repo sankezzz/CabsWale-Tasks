@@ -31,20 +31,25 @@ def generate_audio_chunks():
         stream.close()
         p.terminate()
 
+import sys
 def listen_print_loop(responses):
     for response in responses:
         if not response.results:
             continue
+
         result = response.results[0]
         if not result.alternatives:
             continue
+
         transcript = result.alternatives[0].transcript
+
         if result.is_final:
-            print(f" Final Transcript: {transcript}")
+            sys.stdout.write(f"\rFinal Transcript: {transcript}\n")
+            sys.stdout.flush()
             return transcript
         else:
-            print(f" Partial Transcript: {transcript}")
-    return None  
+            sys.stdout.write(f"\rPartial: {transcript} ")
+            sys.stdout.flush()
 
 def get_STT():
     client = speech.SpeechClient()

@@ -31,20 +31,27 @@ def generate_audio_chunks():
         stream.close()
         p.terminate()
 
+import sys
+
 def listen_print_loop(responses):
     for response in responses:
         if not response.results:
             continue
+
         result = response.results[0]
         if not result.alternatives:
             continue
+
         transcript = result.alternatives[0].transcript
+
         if result.is_final:
-            print(f" Final Transcript: {transcript}")
+            sys.stdout.write(f"\rFinal Transcript: {transcript}\n")
+            sys.stdout.flush()
             return transcript
         else:
-            print(f" Partial Transcript: {transcript}")
-    return None  
+            sys.stdout.write(f"\rPartial: {transcript} ")
+            sys.stdout.flush()
+
 
 def get_STT():
     client = speech.SpeechClient()
@@ -238,7 +245,6 @@ if __name__ == "__main__":
             gemini_results = get_gemini_results(user_transcript, user_buffer, ai_buffer)
             ai_buffer.append(gemini_results)
 
-            #  Start TTS as background thread
             tts_thread = get_TTS(gemini_results)
 
         except KeyboardInterrupt:
