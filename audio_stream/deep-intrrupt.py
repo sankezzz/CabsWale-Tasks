@@ -17,7 +17,7 @@ DEEPGRAM_API_KEY = ""
 RATE = 16000
 CHUNK = 1600
 CHANNELS = 1
-SILENCE_TIMEOUT = 4
+SILENCE_TIMEOUT = 3.1
 VOLUME_THRESHOLD = 500
 INITIAL_GRACE_PERIOD = 5.0
 
@@ -180,7 +180,7 @@ def get_gemini_results(transcript,buffer1,buffer2):
 You are a friendly female cab booking assistant for कैबस्वाले app. Speak naturally like a warm, helpful woman would in real conversation.
 LANGUAGE RESPONSE RULE:
 - If user speaks completely in English: Respond completely in English (simple, conversational English)
-- If user speaks completely in Hindi/regional languages: Respond in Hinglish (Hindi mixed with simple English words)
+- If user speaks completely in Hindi/regional languages: Respond in Hindi (Hindi mixed with simple English words)
 - If user mixes both languages (code-switching): Match their exact style - respond to English parts in English and Hindi parts in Hindi/Hinglish
 - Follow the user's language pattern naturally - be flexible and adaptive
 ABOUT कैबस्वाले (use this info when users ask about service):
@@ -258,43 +258,70 @@ Give ONE natural, varied response that mirrors the user's language mixing style 
     output=results.text
     return output
 
+import threading
+
+
+stop_tts_flag = threading.Event()
+tts_thread = None
+
 def get_TTS(output_text):
-    tts_client = texttospeech.TextToSpeechClient()
-    synthesis_input = texttospeech.SynthesisInput(text=output_text)
-    voice = texttospeech.VoiceSelectionParams(language_code='hi-IN', name="hi-IN-Chirp3-HD-Aoede", ssml_gender=texttospeech.SsmlVoiceGender.FEMALE)#hi-IN-Chirp3-HD-Aoede,hi-IN-Wavenet-A
-    audio_config = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.LINEAR16)
+    def play_audio():
+        tts_client = texttospeech.TextToSpeechClient()
+        synthesis_input = texttospeech.SynthesisInput(text=output_text)
+        voice = texttospeech.VoiceSelectionParams(
+            language_code='hi-IN',
+            name="hi-IN-Wavenet-A",
+            ssml_gender=texttospeech.SsmlVoiceGender.FEMALE
+        )
+        audio_config = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.LINEAR16)
 
-    tts_response = tts_client.synthesize_speech(
-        input=synthesis_input, voice=voice, audio_config=audio_config
-    )
-    print("TTS working and speaking ")
-    with open("response.wav", "wb") as out:
-        out.write(tts_response.audio_content)
+        tts_response = tts_client.synthesize_speech(
+            input=synthesis_input, voice=voice, audio_config=audio_config
+        )
+        with open("response.wav", "wb") as out:
+            out.write(tts_response.audio_content)
 
-    pygame.mixer.init()
-    pygame.mixer.music.load('response.wav')
-    pygame.mixer.music.play()
+        pygame.mixer.init()
+        pygame.mixer.music.load("response.wav")
+        pygame.mixer.music.play()
+        print("Speaking...")
 
-    while pygame.mixer.music.get_busy():
-        pygame.time.Clock().tick(10)
+        while pygame.mixer.music.get_busy():
+            if stop_tts_flag.is_set():
+                print("Interrupted by user.")
+                pygame.mixer.music.stop()
+                break
+            pygame.time.Clock().tick(10)
 
-    pygame.mixer.music.stop()
-    pygame.mixer.quit() 
+        pygame.mixer.quit()
+
+    stop_tts_flag.clear()
+    t = threading.Thread(target=play_audio)
+    t.start()
+    return t
+
 
 
 if __name__ == "__main__":
-    user_buffer=[]
-    ai_buffer=[]
+    user_buffer = []
+    ai_buffer = []
     while True:
         try:
             user_transcript = run_bot()
+
+            if tts_thread and tts_thread.is_alive():
+                #  If user speaks during TTS, interrupt it
+                stop_tts_flag = True
+                tts_thread.join()
+
             user_buffer.append(user_transcript)
-            print(user_buffer)
-            print("getting gemini results")
-            gemini_results=get_gemini_results(user_transcript,user_buffer,ai_buffer)
-            get_TTS(output_text=gemini_results)
-            time.sleep(2)
-            print("you can speak again")
+            print(" Getting Gemini results...")
+            gemini_results = get_gemini_results(user_transcript, user_buffer, ai_buffer)
+            print(gemini_results)
+            ai_buffer.append(gemini_results)
+
+            tts_thread = get_TTS(gemini_results)
+
         except KeyboardInterrupt:
             print("\n Exiting...")
             break
