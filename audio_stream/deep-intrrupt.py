@@ -12,7 +12,7 @@ from google.cloud import speech,texttospeech
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "cred.json"
 generative_model=genai.GenerativeModel(MODEL)
-DEEPGRAM_API_KEY = ""
+DEEPGRAM_API_KEY = "e2bce311abe5f52d53bedfe2b6f2b642ddd98937"
 
 RATE = 16000
 CHUNK = 1600

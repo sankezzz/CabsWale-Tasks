@@ -1,0 +1,148 @@
+exports.detectProminentFaces = onRequest({
+    cors: true,
+    timeoutSeconds: 540
+}, async (req, res) => {
+    try {
+        if (req.method !== 'POST') {
+            return res.status(405).json({ error: 'Method not allowed. Use POST.' });
+        }
+
+        const { userImages } = req.body;
+        if (!userImages || !Array.isArray(userImages) || userImages.length === 0) {
+            return res.status(400).json({
+                error: 'Invalid request. Please provide userImages as a non-empty array of URLs.'
+            });
+        }
+
+        if (userImages.length > 20) {
+            return res.status(400).json({
+                error: 'Too many images. Maximum 20 images allowed per request.'
+            });
+        }
+
+        console.log(Processing ${userImages.length} images for face detection);
+
+        const batchSize = 10;
+        const globalProminenceOrder = [];
+
+        for (let i = 0; i < userImages.length; i += batchSize) {
+            const batch = userImages.slice(i, i + batchSize);
+            const batchImages = [];
+            const batchIndexes = [];
+
+            for (let j = 0; j < batch.length; j++) {
+                const globalIndex = i + j;
+                try {
+                    const imageData = await fetchImageAsBase64(batch[j]);
+                    batchImages.push(imageData);
+                    batchIndexes.push(globalIndex);
+                } catch (error) {
+                    console.warn(Failed to fetch image at index ${globalIndex}: ${error.message});
+                }
+            }
+
+            if (batchImages.length === 0) {
+                continue;
+            }
+
+            const prompt = `You are a facial prominence evaluation AI. You are given an array of ${batchImages.length} images. Your task is to analyze these images and identify which image(s) show the *most clearly visible and prominent face of the user*.
+
+===================================
+CRITERIA FOR "MOST PROMINENT FACE":
+===================================
+A face should be considered *prominent* if:
+- It is the *largest and most centered* face in the image
+- It is in *sharp focus and well-lit*
+- The user is *facing forward* or slightly angled — not turned away or in the background
+- It *dominates the frame* (compared to other people or background)
+
+You may assume that the same user appears in multiple images.
+
+===================================
+GOAL:
+===================================
+From the list of input images, return the indexes of the image(s) where the *user's face is clearly the most prominent*.
+
+IMPORTANT:
+- Return the list (an array from 0 to ${batchImages.length - 1} where ${batchImages.length} is length of images array - no number should be missing) in *descending order of prominence* — the most prominent image first, followed by less prominent ones.
+- At the end of list include the images that are not of faces and other things as i need the array to be returned
+- If no image clearly shows the user's face prominently, return the original order itself.
+
+You must only return the result in the following JSON format:
+{
+  "prominent_indexes": [list of integer indexes from 0 to ${batchImages.length - 1}]
+}
+
+- Do not explain your reasoning.
+- Do not include any text outside the JSON.`;
+
+            try {
+                const result = await model.generateContent([prompt, ...batchImages]);
+                const response = await result.response;
+                const text = response.text();
+
+                let batchProminenceOrder = [];
+                try {
+                    const cleanText = text.trim();
+                    let jsonText = cleanText;
+
+                    const jsonMatch = cleanText.match(/\{[\s\S]*\}/);
+                    if (jsonMatch) {
+                        jsonText = jsonMatch[0];
+                    }
+
+                    const parsed = JSON.parse(jsonText);
+                    if (parsed.prominent_indexes && Array.isArray(parsed.prominent_indexes)) {
+                        batchProminenceOrder = parsed.prominent_indexes;
+                    }
+                } catch (parseError) {
+                    console.warn(Failed to parse AI response for batch ${i}: ${parseError.message});
+                    batchProminenceOrder = Array.from({ length: batchImages.length }, (_, idx) => idx);
+                }
+
+                if (batchProminenceOrder.length === batchImages.length) {
+                    // Map local batch indexes to global indexes
+                    const globalOrder = batchProminenceOrder.map(localIdx => {
+                        if (localIdx >= 0 && localIdx < batchIndexes.length) {
+                            return batchIndexes[localIdx];
+                        }
+                        return null;
+                    }).filter(idx => idx !== null);
+
+                    globalProminenceOrder.push(...globalOrder);
+                } else {
+                    globalProminenceOrder.push(...batchIndexes);
+                }
+
+            } catch (error) {
+                console.error(Error processing batch starting at index ${i}:, error.message);
+            }
+
+            if (i + batchSize < userImages.length) {
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+        }
+
+        const processedGlobalIndexes = new Set(globalProminenceOrder);
+        const missingIndexes = [];
+        for (let i = 0; i < userImages.length; i++) {
+            if (!processedGlobalIndexes.has(i)) {
+                missingIndexes.push(i);
+            }
+        }
+
+        const finalProminenceOrder = [...globalProminenceOrder, ...missingIndexes];
+
+        console.log(Processed ${globalProminenceOrder.length} images successfully out of ${userImages.length} total images);
+        console.log(Final prominence order: [${finalProminenceOrder.join(', ')}]);
+
+        return res.status(200).json({
+            prominantImages: finalProminenceOrder
+        });
+
+    } catch (error) {
+        console.error('Error in detectProminentFaces function:', error);
+        return res.status(500).json({
+            error: 'Internal server error occurred while processing images.',
+            details: error.message
+        });}
