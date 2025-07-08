@@ -5,12 +5,12 @@ import pyaudio
 from playsound import playsound
 
 # Constants
-RECORD_SECONDS = 5
+RECORD_SECONDS = 2
 SAMPLE_RATE = 16000
 CHUNK = 1024
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
-URL = "http://127.0.0.1:5001/cabswale-test/us-central1/voice_bot"
+URL = "https://voice-bot-7cijur72sa-uc.a.run.app"
 
 def record_audio(file_path):
     p = pyaudio.PyAudio()
