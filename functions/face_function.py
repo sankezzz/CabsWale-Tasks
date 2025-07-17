@@ -14,7 +14,6 @@ image_paths = [
     "faces/face5.jpg",
     "faces/adhar.jpg"
     
-    
 ]
 
 # Minimum 3 images required

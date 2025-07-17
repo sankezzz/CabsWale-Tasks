@@ -162,7 +162,7 @@ Your previous replies: "{' '.join(buffer_memory_ai_response)}"
 
 
     # Step 4: TTS
-    tts_path = elevenlabs_tts(spoken_part, api_key='sk_3a0ffd2e6c10ec643257a857deea8199cd225c219858848a')
+    tts_path = elevenlabs_tts(spoken_part, api_key='')
     if not tts_path:
         return "TTS failed", 500
 
